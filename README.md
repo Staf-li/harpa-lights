@@ -55,6 +55,8 @@ You'll only need to do this if you're actually doing an installation in Harpa an
 * Download the repository
 * (OSX - install Homebrew [optional, but it's much simpler than installing things manually, see below])
 * Install Cairo & its dependencies [here](http://cairographics.org/download/)
+* Install ZMQ [here](http://zeromq.org/intro:get-the-software)
+* If running on OSX run `./configure --without-libsodium; make; make install` for installing ZMQ, if you don't have libsodium installed.
 * run `npm install` inside the `dev/render-server` folder
 * open a web browser, go to `127.0.0.1:8088?method=getCanvas`, and you should see the web debugging view, with the PONG logo running in the background + sparkles.
 

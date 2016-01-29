@@ -1,10 +1,8 @@
 var AppConfig = require("../common/Config.js");
-var HarpaGameView = require('./views/HarpaGameViewPong.js');
-var HarpaScoreView = require('./views/HarpaScoreViewPong.js');
+
 var winston = require('winston');
 var io = require('socket.io-client');
 var Utils = require('../common/Utils.js').Utils;
-var Game = require("../common/GamePong.js").Game;
 var Scheduler = require("./scheduler/Scheduler.js");
 var http = require('http');
 var NanoTimer = require('nanotimer');
@@ -13,9 +11,71 @@ var zmq = require("zmq");
 var Canvas = require("canvas");
 var Image = Canvas.Image;
 
+var SplatRenderer = require('./views/splat-renderer.js');
 
 var front_patch = require('./patchdata/front-main-patch-3-extended.js');
 var side_patch = require('./patchdata/side-patch-1.js');
+
+var frontCropFramePoints = {
+  tl: {
+    x: 0.5351437699680511,
+    y: 0.05750798722044728
+  },
+  tr: {
+    x: 0.9313099041533547,
+    y: 0.06230031948881789
+  },
+  br: {
+    x: 0.9472843450479234,
+    y: 0.33865814696485624
+  },
+  bl: {
+    x: 0.5111821086261981,
+    y: 0.33706070287539935
+  },
+  translate: {
+	x: -40,
+	y: -7
+  }
+};
+
+var sideCropFramePoints = {
+  tl: {
+    x: 0.039936102236421724,
+    y: 0.12460063897763578
+  },
+  tr: {
+    x: 0.5351437699680511,
+    y: 0.05750798722044728
+  },
+  br: {
+    x: 0.5111821086261981,
+    y: 0.33706070287539935
+  },
+  bl: {
+    x: 0.04472843450479233,
+    y: 0.3610223642172524
+  },
+  translate: {
+	x: -2,
+  	y: -7
+  }
+};
+
+function makeCropFrame(points){
+  return {
+    x: points.tl.x,
+    y: points.tl.y,
+    w: points.tr.x - points.tl.x,
+    h: points.br.y - points.tr.y,
+    translate: points.translate 
+  };
+}
+
+// Paint Splatter specific classes
+var HarpaSplatterView = require('./views/HarpaSplatterView.js');
+var Blob = require("./views/blob.js")
+// ————
 
 var INTERFACE_1_IP = "2.224.168.149";
 var INTERFACE_2_IP = "2.145.222.186";
@@ -23,11 +83,10 @@ var INTERFACE_2_IP = "2.145.222.186";
 var SCREENSAVER_SERVER_IP = "tcp://127.0.0.1";
 
 // change between local & remote game servers
-//var GAME_SERVER_IP = "http://127.0.0.1";
-var GAME_SERVER_IP = "http://" + AppConfig.ips.game_server.url;
+// var GAME_SERVER_IP = "http://127.0.0.1";
+var GAME_SERVER_IP = "http://paint-splatter.herokuapp.com";//+ AppConfig.ips.game_server.url;
 //
 var active = true;
-
 
 console.log("**************************************************");
 console.log("*                                                *");
@@ -57,196 +116,82 @@ var harpaFaces = {
 	"side" : [39,9]
 };
 
-var gameView = new HarpaGameView();
-gameView.init(INTERFACE_1_IP, front_patch, harpaFaces.front[0], harpaFaces.front[1]);
-var scoreView = new HarpaScoreView();
-scoreView.init(INTERFACE_2_IP, side_patch, harpaFaces.side[0], harpaFaces.side[1]);
+// var gameView = new HarpaGameView();
+// gameView.init(INTERFACE_1_IP, front_patch, harpaFaces.front[0], harpaFaces.front[1]);
 
-var game = Game.init();
+// scoreView.init(INTERFACE_2_IP, side_patch, harpaFaces.side[0], harpaFaces.side[1]);
+
+// Shared splat renderer
+var splatRenderer = new SplatRenderer();
+
+var splatterView = new HarpaSplatterView();
+splatterView.init(INTERFACE_1_IP, front_patch,
+	harpaFaces.front[0], harpaFaces.front[1],
+	splatRenderer, makeCropFrame(frontCropFramePoints));
+
+var secondSplatterView = new HarpaSplatterView();
+secondSplatterView.init(INTERFACE_2_IP, side_patch,
+	harpaFaces.side[0], harpaFaces.side[1],
+	splatRenderer, makeCropFrame(sideCropFramePoints));
 
 var renderTimer = new NanoTimer();
 renderTimer.setInterval(render.bind(this), '', '33m');
 
+var game = {};
 
-winston.info("connecting to game server at " + GAME_SERVER_IP + ":" + AppConfig.ips.game_server.port);
+var socket = io('http://paint-splatter.herokuapp.com');
 
+socket.on('connection', function (e) {
+	console.log("Connected to socket server.");
+})
 
-// TODO : replace this with Zero MQ
-var gameSocket = io.connect(GAME_SERVER_IP + ':' + AppConfig.ips.game_server.port, {reconnect: true});
-var gameMode = "wait";
-var waitTime = 0;
-
-gameSocket.on('connect', function(){
-
-	winston.info("conected to game server!");
-
-	// handshake with server
-	gameSocket.on('identify', function() {
-		winston.info("asked to identify by server");
-
-		gameSocket.emit('remoterenderer', { name : "Harpa Renderer"});
-	});
-
-	// game update
-	gameSocket.on('render', onGameUpdate);
-
+socket.on('blob', function(data) {
+	console.log("splat: ", data);
+	splatterView.splatRenderer.addSplat(new Blob(data.x, data.y*2.5, data.color));
+	secondSplatterView.splatRenderer.addSplat(new Blob(data.x, data.y*2.5, data.color));
 });
 
-function onGameUpdate(data){
-
-	// deserialise game state into one currently in memory
-	gameMode = data.mode;
-	game.setFromSerialised(data.data);
-
-	if (gameMode == "wait"){
-		waitTime++;
-
-		// if we've been waiting for a long time, override the gameMode to show the screensaver
-		if (waitTime > 1000){
-			gameMode = "screensaver";
-		}
-	} else {
-		screensaverMode = false;
-		waitTime = 0;
-	}
-
-
-}
-
-/*
-	Main render loop
-*/
-
 function render() {
-
-	if (active){
-
-		// if we're waiting, or in screensaver mode, keep the screensaver server rendering
-		if (gameMode == "wait" || gameMode == "screensaver" || scheduler.mode == Scheduler.MODE_SCREENSAVER){
-			screensaverMode = true;
-			saverSock_to.send("render");
-		}
-
-		if (scheduler.mode == Scheduler.MODE_GAME){
-			gameView.render(game, gameMode);
-			scoreView.render(game, gameMode);
-		} else if (scheduler.mode == Scheduler.MODE_SCREENSAVER) {
-			
-			gameView.render(game, "screensaver");
-			scoreView.render(game, "screensaver");
-
-		} else {
-
-			var mode = (scheduler.mode == Scheduler.MODE_SHIMMER) ? "sleep" : "blackout";
-			gameView.render(game, mode);
-			scoreView.render(game, mode);
-		}
-
-
-	}
-
+	splatterView.render(game, "game");
+	secondSplatterView.render(game, "game");
 };
 
 /*
-	Communication with screensaver server (in a separate process or machine)
-*/
-
-var saverSock_from = zmq.socket("pull");
-var saverSock_to = zmq.socket("push");
-var screensaver_image = new Image;
-
-
-saverSock_from.connect(SCREENSAVER_SERVER_IP + ":" + AppConfig.PORT_SCREENSAVER_IMG_SEND);
-saverSock_to.bindSync(SCREENSAVER_SERVER_IP + ":" + AppConfig.PORT_SCREENSAVER_CMD);
-
-
-
-saverSock_from.on('message', function(msg){
-	
-	if (msg.length){
-			screensaver_image.src = msg;
-		try {
-			// draw front face
-			gameView.screensaverCtx.drawImage(screensaver_image, harpaFaces.side[0]+1,0, harpaFaces.front[0], harpaFaces.front[1], 0,0, harpaFaces.front[0], harpaFaces.front[1]);
-			// draw side face
-			scoreView.screensaverCtx.drawImage(screensaver_image, 0,0,harpaFaces.side[0], harpaFaces.side[1], 0,0,harpaFaces.side[0], harpaFaces.side[1]);
-
-		} catch(e){
-			console.log(e);
-		}
-	}
-	// console.log(msg.length);
-});
-
-/*
-	Communication with Processing (sends raw byte data)
-*/
-
-var processing_from = zmq.socket("pull");
-var processing_image = new Image;
-
-processing_from.connect(SCREENSAVER_SERVER_IP + ":" + AppConfig.PORT_PROCESSING_IMG_SEND);
-processing_from.on('message', function(msg){
-
-	if (msg.length){
-		processing_image.src = msg;
-		try {
-			// draw front face
-			gameView.screensaverCtx.drawImage(processing_image, harpaFaces.side[0]+1,0, harpaFaces.front[0], harpaFaces.front[1], 0,0, harpaFaces.front[0], harpaFaces.front[1]);
-			// draw side face
-			scoreView.screensaverCtx.drawImage(processing_image, 0,0,harpaFaces.side[0], harpaFaces.side[1], 0,0,harpaFaces.side[0], harpaFaces.side[1]);
-
-		} catch(e){
-			console.log(e);
-		}
-	}
-});
-
-
-
-/* 
 	Global scheduler, manages overall state of lights
 	game, blackout, screensaver etc
 */
 
-
 function updateScheduler() {
 	scheduler.update();
 }
+
 setInterval(updateScheduler.bind(this), 60 * 1000);
 updateScheduler();
-
 
 // DEBUGGING
 //
 
-
 var server = http.createServer(function(request, response){
-
 	var queryComponents = Utils.parseQueryString(request.url);
 
 	var method = null;
 	var responseText = "";
 
 	if (queryComponents["method"]){
-
 		method = queryComponents["method"];
 		responseText = "called method : " + method;
 
 		switch(method){
-
 			case "getCanvas":
-
 				responseText = fs.readFileSync("./html/showCanvas.html", "utf8");
-
 			break;
 
 			case "getGameCanvasSource":
-				responseText = gameView.canvas.toDataURL();
+				responseText = splatterView.canvas.toDataURL();
 			break;
 
 			case "getScoreCanvasSource":
-				responseText = scoreView.canvas.toDataURL();
+				responseText = secondSplatterView.canvas.toDataURL();
 			break;
 
 			case "stop":
@@ -280,12 +225,8 @@ var server = http.createServer(function(request, response){
 			case "mode_screensaver":
 				scheduler.mode = Scheduler.MODE_SCREENSAVER;
 			break;
-
 		}
-
-
 	}
-
 
 	response.writeHead(200, {
 		'Content-Type': 'text/html',
@@ -293,8 +234,6 @@ var server = http.createServer(function(request, response){
 	});
 
 	response.end(responseText);
-
-
 });
 
 server.listen(8088);

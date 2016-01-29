@@ -14,6 +14,23 @@
         // stores the current beat envelope / value
         this.currentBeatValue = 0;
 
+
+        function Blob(initX, initY, color, time) {
+            var _time = time || new Date();
+            var _x = initX;
+            var _y = initY;
+            var _color = color;
+            
+        }
+
+        this.currentBlobs = [];
+        this.currentWeather = {
+            wind: 0.2,
+            direction: 179
+        };
+
+
+
     }
 
     var p = HarpaTestVisualiser.prototype = new HarpaVisualiserBase();
@@ -52,13 +69,13 @@
 
         // ** Beat visualisation **
 
-        this.frontCtx.fillStyle = "rgba(255,0,0,0.5)";
+        this.frontCtx.fillStyle = "rgba(255,0,0,1.0)";
 
-        var barWidth = this.currentBeatValue * this.faces.front.width * 0.5;
+        var barWidth = this.currentBeatValue * this.faces.front.width * 0.1;
         this.frontCtx.fillRect(this.faces.front.width / 2, 0, barWidth / 2, this.faces.front.height);
         this.frontCtx.fillRect(this.faces.front.width / 2 - barWidth/2, 0, barWidth / 2, this.faces.front.height);
 
-        this.sideCtx.fillStyle = "rgba(255,0,0,0.5)";
+        this.sideCtx.fillStyle = "rgba(255,0,0,1.0)";
 
         barWidth = this.currentBeatValue * this.faces.side.width * 0.5;
         this.sideCtx.fillRect(this.faces.side.width / 2, 0, barWidth / 2, this.faces.side.height);

@@ -43,15 +43,10 @@ p.init = function(ip, patchdata, width, height){
 
 p.render = function(game, mode){
 
-	if (mode != this.currentMode){
-		winston.info("View changed mode to " + mode);
-	}
-
 	this.currentMode = mode;
 
 	this.ctx.fillStyle = "black";
-	this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
-
+	this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
 	switch(mode){
 
