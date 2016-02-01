@@ -1,6 +1,6 @@
 module.exports = (function SplatRenderer() {
 	// Five minutes
-	var MAX_SPLAT_AGE = 5*60*1000;
+	var MAX_SPLAT_AGE = 60*1000;
 	var MAX_SPLATS = 1000;
 
 	var _splats = [];

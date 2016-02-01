@@ -38,11 +38,10 @@ p._renderGame = function(game, mode) {
 	}
 
 	this.ctx.save();
-
 	//console.log(1/this.cropFrame.w);
 
 	this.ctx.translate(this.cropFrame.translate.x, this.cropFrame.translate.y);
-	this.ctx.scale(2, 2);
+	this.ctx.scale(1.9, 1.4);
 
 	this.splatRenderer.update(0, 1);
 	this.splatRenderer.render(this.ctx, this.width, this.height, this.cropFrame);

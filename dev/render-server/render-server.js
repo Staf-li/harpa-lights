@@ -35,7 +35,7 @@ var frontCropFramePoints = {
   },
   translate: {
 	x: -40,
-	y: -7
+	y: -3
   }
 };
 
@@ -58,7 +58,7 @@ var sideCropFramePoints = {
   },
   translate: {
 	x: -2,
-  	y: -7
+  	y: -2
   }
 };
 

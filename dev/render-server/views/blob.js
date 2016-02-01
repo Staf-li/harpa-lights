@@ -32,7 +32,14 @@ module.exports = (function Blob(x, y, color) {
     ctx.save();
     ctx.fillStyle = _color;
     ctx.beginPath();
-    ctx.arc(_x * cw, _y * ch, 0.05 * cw, 0, 2 * Math.PI);
+    ctx.moveTo(_initX * cw, _initY * ch);
+    ctx.lineTo(_x * cw, _y * ch);
+    ctx.lineWidth = 0.03 * cw;
+    ctx.closePath();
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(_x * cw, _y * ch, 0.015 * cw, 0, 2 * Math.PI);
     ctx.closePath();
     ctx.fill();
     ctx.restore();
