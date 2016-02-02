@@ -1,6 +1,6 @@
 module.exports = (function SplatRenderer() {
 	// Five minutes
-	var MAX_SPLAT_AGE = 60*1000;
+	var MAX_SPLAT_AGE = 5*60*1000;
 	var MAX_SPLATS = 1000;
 
 	var _splats = [];
@@ -8,22 +8,16 @@ module.exports = (function SplatRenderer() {
 	var _weatherData = {};
 
 	function addSplat(splat) {
-		splat.atTime = +new Date();
 		return _splats.push(splat);
 	}
 
-	function _splatRelativeAge(splat) {
-		return _currentTime - splat.atTime;
-	}
-
 	function shouldCleanup(splat) {
-		return _splatRelativeAge(splat) >= MAX_SPLAT_AGE || _splats.length > MAX_SPLATS;
+		return splat.relativeAge() >= MAX_SPLAT_AGE || _splats.length > MAX_SPLATS;
 	}
 
 	function cleanUp() {
 		for(var i in _splats) {
 			if(shouldCleanup(_splats[i])) {
-				console.log("Cleanup splats");
 				_splats.splice(i--, 1);
 			}
 		}
@@ -39,7 +33,7 @@ module.exports = (function SplatRenderer() {
 		}
 	}
 
-	function render(ctx, cw, ch) {
+	function render(ctx, cw, ch, yScale) {
 		for(var i in _splats) {
 			_splats[i].render(ctx, cw, ch);
 		}
@@ -47,7 +41,7 @@ module.exports = (function SplatRenderer() {
 
 	setInterval(function() {
 		if (_splats.length > 0) console.log("Total active splats: ", _splats.length);
-	}, 5000);
+	}, 60 * 1000);
 
 	console.log("Started splat renderer at time", _currentTime);
 

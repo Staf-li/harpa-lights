@@ -16,61 +16,28 @@ var SplatRenderer = require('./views/splat-renderer.js');
 var front_patch = require('./patchdata/front-main-patch-3-extended.js');
 var side_patch = require('./patchdata/side-patch-1.js');
 
-var frontCropFramePoints = {
-  tl: {
-    x: 0.5351437699680511,
-    y: 0.05750798722044728
+var frontTransform = {
+  t: {
+  	x: -20,
+  	y: -2.2,
   },
-  tr: {
-    x: 0.9313099041533547,
-    y: 0.06230031948881789
-  },
-  br: {
-    x: 0.9472843450479234,
-    y: 0.33865814696485624
-  },
-  bl: {
-    x: 0.5111821086261981,
-    y: 0.33706070287539935
-  },
-  translate: {
-	x: -40,
-	y: -3
+  s: {
+  	x: 2.33,
+  	y: 1
   }
+
 };
 
-var sideCropFramePoints = {
-  tl: {
-    x: 0.039936102236421724,
-    y: 0.12460063897763578
+var sideTransform = {
+  t: {
+  	x: -1,
+  	y: -4
   },
-  tr: {
-    x: 0.5351437699680511,
-    y: 0.05750798722044728
-  },
-  br: {
-    x: 0.5111821086261981,
-    y: 0.33706070287539935
-  },
-  bl: {
-    x: 0.04472843450479233,
-    y: 0.3610223642172524
-  },
-  translate: {
-	x: -2,
-  	y: -2
+  s: {
+  	x: 2,
+  	y: 1
   }
 };
-
-function makeCropFrame(points){
-  return {
-    x: points.tl.x,
-    y: points.tl.y,
-    w: points.tr.x - points.tl.x,
-    h: points.br.y - points.tr.y,
-    translate: points.translate 
-  };
-}
 
 // Paint Splatter specific classes
 var HarpaSplatterView = require('./views/HarpaSplatterView.js');
@@ -127,12 +94,12 @@ var splatRenderer = new SplatRenderer();
 var splatterView = new HarpaSplatterView();
 splatterView.init(INTERFACE_1_IP, front_patch,
 	harpaFaces.front[0], harpaFaces.front[1],
-	splatRenderer, makeCropFrame(frontCropFramePoints));
+	splatRenderer, frontTransform);
 
 var secondSplatterView = new HarpaSplatterView();
 secondSplatterView.init(INTERFACE_2_IP, side_patch,
 	harpaFaces.side[0], harpaFaces.side[1],
-	splatRenderer, makeCropFrame(sideCropFramePoints));
+	splatRenderer, sideTransform);
 
 var renderTimer = new NanoTimer();
 renderTimer.setInterval(render.bind(this), '', '33m');
@@ -145,10 +112,14 @@ socket.on('connection', function (e) {
 	console.log("Connected to socket server.");
 })
 
+var currentWeather = {
+  time: +new Date(), rainmm: 0, windSpeed: 0, windDirection: 0
+};
+
 socket.on('blob', function(data) {
 	console.log("splat: ", data);
-	splatterView.splatRenderer.addSplat(new Blob(data.x, data.y*2.5, data.color));
-	secondSplatterView.splatRenderer.addSplat(new Blob(data.x, data.y*2.5, data.color));
+	splatRenderer.addSplat(new Blob(data.x, data.y, data.color, currentWeather, 0.6666));
+	
 });
 
 function render() {
