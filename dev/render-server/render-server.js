@@ -117,11 +117,12 @@ var currentWeather = {
 };
 
 socket.on('blob', function(data) {
-	console.log("splat: ", data);
 	splatRenderer.addSplat(new Blob(data.x, data.y, data.color, currentWeather, 0.6666));
 	
 	// Log blob in file
-	winston.info({data: data, time: new Date()});
+	if(data.isGhost !== true) {
+		winston.info({data: data, time: new Date()});
+	}
 });
 
 function render() {

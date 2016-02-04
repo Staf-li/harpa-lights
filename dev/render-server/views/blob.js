@@ -1,4 +1,6 @@
 module.exports = (function Blob(x, y, color, weather, yScale) {
+  var _originalX = x;
+  var _originalY = y;
   var _initX = x;
   var _initY = y;
   var _yScale = yScale ? yScale : 1;
@@ -75,7 +77,7 @@ module.exports = (function Blob(x, y, color, weather, yScale) {
     ctx.save();
     ctx.fillStyle = rgbaString(_color, _opacity);
 
-    ctx.translate(_initX * cw, _initY * ch * _yScale);
+    ctx.translate(_originalX * cw, _originalY * ch * _yScale);
 
     var windRotation = - _weather.windDirection * _weather.windSpeed / 30 * Math.PI / 2;
     if(windRotation > Math.PI/2) windRotation = Math.PI/2;
@@ -83,7 +85,7 @@ module.exports = (function Blob(x, y, color, weather, yScale) {
     if(windRotation < - Math.PI/2) windRotation = - Math.PI/2
 
     ctx.rotate(windRotation)
-    ctx.translate(-_initX * cw, -_initY * ch * _yScale);
+    ctx.translate(-_originalX * cw, -_originalY * ch * _yScale);
     
     ctx.beginPath();
     ctx.arc(_initX * cw, _initY * ch * _yScale, radius * cw, Math.PI, 2 * Math.PI);
