@@ -6,17 +6,25 @@ module.exports = (function Blob(x, y, color, weather, yScale) {
   var _x = x;
   var _y = y;
 
-  var radius = 0.02;
+  var radius = 0.015;
+  var fadeOutDelay = 40*1000;
+  var fadeOutTime = 20*1000;
 
   var _color = color;
   var _weather = weather;
 
-  var _leakSpeed = 0.00012;
+  var _leakSpeed = 0.00010;
   var _maxTrailLength = 0.3;
+
+  var _rotation = 0;
+
+  var _killMe = false;
+
+  var _opacity = 1;
 
   var atTime = +new Date();
 
-  function scaledCoords(x, y, scale) {
+  function scaledCoords(x, y, scale) {  
     return {
       x: x * scale,
       y: y * scale,
@@ -36,39 +44,51 @@ module.exports = (function Blob(x, y, color, weather, yScale) {
     return { x: _initX, y: _initY, color: _color };
   };
 
-  // dirX is between 0 and π, on the half-circle
-  // accelY is the acceleration downwards
-  var update = function() {
+  var update = function(dt) {
     var deltaX = 0;
-    var deltaY = _leakSpeed;
+    var deltaY = _weather.isRaining ? dt * _leakSpeed * 1.5 : dt * _leakSpeed;
 
-    var newX = _x + deltaX;// + Math.cos(dirX) * windSpeed;
+    var newX = _x + deltaX;
     var newY = _y + deltaY;
 
     _x = newX;
     _y = newY;
+
+    if(relativeAge() > fadeOutDelay) {
+      _opacity -= 0.001 * dt;
+      if (_opacity < 0) {
+        _killMe = true;
+      }
+    }
 
     if (lengthSquared() > Math.pow(_maxTrailLength, 2)) {
       _initX = _initX + deltaX;
       _initY = _initY + deltaY;
     }
   };
-  
+
+  function rgbaString(colorArray, alpha) {
+    return 'rgba(' + colorArray[0] + ', ' + colorArray[1] + ', ' + colorArray[2] + ', ' + alpha + ')';
+  }
+
   var render = function(ctx, cw, ch) {
     ctx.save();
-    ctx.fillStyle = _color;
-    ctx.beginPath();
-    
-    ctx.moveTo(_initX * cw, _initY * ch * _yScale);
-    ctx.lineTo(_x * cw, _y * ch * _yScale);
-    ctx.strokeStyle = _color;
-    ctx.lineWidth = radius * 2 * cw;
-    ctx.stroke();
-    ctx.closePath();
+    ctx.fillStyle = rgbaString(_color, _opacity);
 
+    ctx.translate(_initX * cw, _initY * ch * _yScale);
+
+    var windRotation = - _weather.windDirection * _weather.windSpeed / 30 * Math.PI / 2;
+    if(windRotation > Math.PI/2) windRotation = Math.PI/2;
+
+    if(windRotation < - Math.PI/2) windRotation = - Math.PI/2
+
+    ctx.rotate(windRotation)
+    ctx.translate(-_initX * cw, -_initY * ch * _yScale);
+    
     ctx.beginPath();
-    ctx.arc(_initX * cw, _initY * ch * _yScale, radius * cw, 0, 2 * Math.PI);
-    ctx.arc(_x * cw, _y * ch * _yScale, radius * cw, 0, 2 * Math.PI);
+    ctx.arc(_initX * cw, _initY * ch * _yScale, radius * cw, Math.PI, 2 * Math.PI);
+    ctx.arc(_x * cw, _y * ch * _yScale, radius * cw, 0, Math.PI);
+
     ctx.closePath();
     ctx.fill();
 
@@ -81,6 +101,7 @@ module.exports = (function Blob(x, y, color, weather, yScale) {
     color: function() { return _color; },
     blobData: blobData,
     atTime: atTime,
-    relativeAge: relativeAge
+    relativeAge: relativeAge,
+    shouldKill: function() { return _killMe; }
   };
 });

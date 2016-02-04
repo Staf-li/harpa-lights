@@ -1,55 +1,65 @@
 module.exports = (function SplatRenderer() {
-	// Five minutes
-	var MAX_SPLAT_AGE = 5*60*1000;
-	var MAX_SPLATS = 1000;
+  // Five minutes
+  var MAX_SPLAT_AGE = 2*60*1000;
+  var MAX_SPLATS = 1000;
 
-	var _splats = [];
-	var _currentTime = +new Date();
-	var _weatherData = {};
+  var _splats = [];
+  var _currentTime = +new Date();
 
-	function addSplat(splat) {
-		return _splats.push(splat);
-	}
+  var OPTIMAL_FRAMERATE = 1000/60;
 
-	function shouldCleanup(splat) {
-		return splat.relativeAge() >= MAX_SPLAT_AGE || _splats.length > MAX_SPLATS;
-	}
+  function addSplat(splat) {
+    return _splats.push(splat);
+  }
 
-	function cleanUp() {
-		for(var i in _splats) {
-			if(shouldCleanup(_splats[i])) {
-				_splats.splice(i--, 1);
-			}
-		}
-	}
+  function shouldCleanup(splat) {
+    return splat.shouldKill() || splat.relativeAge() >= MAX_SPLAT_AGE || _splats.length > MAX_SPLATS;
+  }
 
-	function update() {
-		// Tick the clock and cleanup old splats
-		_currentTime = +new Date();
-		cleanUp();
+  function cleanUp() {
+    for(var i in _splats) {
+      if(shouldCleanup(_splats[i])) {
+        _splats.splice(i--, 1);
+      }
+    }
+  }
 
-		for(var i in _splats) {
-			_splats[i].update();
-		}
-	}
+  function update() {
+    // Tick the clock and cleanup old splats 
+    var timeNow = +new Date();
 
-	function render(ctx, cw, ch, yScale) {
-		for(var i in _splats) {
-			_splats[i].render(ctx, cw, ch);
-		}
-	}
+    var deltaTime = timeNow - _currentTime;
+    _currentTime = timeNow;
 
-	setInterval(function() {
-		if (_splats.length > 0) console.log("Total active splats: ", _splats.length);
-	}, 60 * 1000);
+    var dt = deltaTime / OPTIMAL_FRAMERATE;
 
-	console.log("Started splat renderer at time", _currentTime);
+    cleanUp();
 
-	return {
-		addSplat: addSplat,
-		shouldCleanup: shouldCleanup,
-		cleanUp: cleanUp,
-		update: update,
-		render: render
-	}
+      if(dt > 100) {
+          dt = 1;
+      }
+
+    for(var i in _splats) {
+      _splats[i].update(dt);
+    }
+  }
+
+  function render(ctx, cw, ch) {
+    for(var i in _splats) {
+      _splats[i].render(ctx, cw, ch);
+    }
+  }
+
+  setInterval(function() {
+    if (_splats.length > 0)
+      console.log("Total active splats: ", _splats.length);
+  }, 60 * 1000);
+
+  return {
+    addSplat: addSplat,
+    shouldCleanup: shouldCleanup,
+    cleanUp: cleanUp,
+    update: update,
+    render: render
+  }
 });
