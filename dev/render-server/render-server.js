@@ -112,12 +112,8 @@ socket.on('connection', function (e) {
 	console.log("Connected to socket server.");
 })
 
-var currentWeather = {
-  time: +new Date(), rainmm: 0, windSpeed: 0, windDirection: 0
-};
-
 socket.on('blob', function(data) {
-	splatRenderer.addSplat(new Blob(data.x, data.y, data.color, currentWeather, 0.6666));
+	splatRenderer.addSplat(new Blob(data.x, data.y, data.color, data.weather, 0.6666));
 	
 	// Log blob in file
 	if(data.isGhost !== true) {
