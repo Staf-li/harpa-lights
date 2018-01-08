@@ -11,18 +11,21 @@ var zmq = require("zmq");
 var Canvas = require("canvas");
 var Image = Canvas.Image;
 
-var SplatRenderer = require('./views/splat-renderer.js');
+// Generalized view class and a renderer to render the view
+var VisualView = require('./views/VisualView.js');
+
+var VisualRenderer = require('./views/visual-renderer.js');
 
 var front_patch = require('./patchdata/front-main-patch-3-extended.js');
 var side_patch = require('./patchdata/side-patch-1.js');
 
 var frontTransform = {
   t: {
-  	x: -20,
-  	y: -2.2,
+  	x: 0,
+  	y: 0,
   },
   s: {
-  	x: 2.33,
+  	x: 1,
   	y: 1
   }
 
@@ -30,34 +33,22 @@ var frontTransform = {
 
 var sideTransform = {
   t: {
-  	x: -1,
-  	y: -4
+  	x: 0,
+  	y: 0
   },
   s: {
-  	x: 2,
+  	x: 1,
   	y: 1
   }
 };
 
-// Paint Splatter specific classes
-var HarpaSplatterView = require('./views/HarpaSplatterView.js');
-var Blob = require("./views/blob.js")
-// ————
-
 var INTERFACE_1_IP = "2.224.168.149";
 var INTERFACE_2_IP = "2.145.222.186";
 
-var SCREENSAVER_SERVER_IP = "tcp://127.0.0.1";
-
-// change between local & remote game servers
-// var GAME_SERVER_IP = "http://127.0.0.1";
-var GAME_SERVER_IP = "http://paint.is";//+ AppConfig.ips.game_server.url;
-//
 var active = true;
 
 console.log("**************************************************");
 console.log("*                                                *");
-console.log("*                  HARPA PONG!                   *");
 console.log("*                                                *");
 console.log("*                 RENDER SERVER                  *");
 console.log("*                                                *");
@@ -66,7 +57,7 @@ console.log("*.'   `._.'   `._.'   `._.'   `._.'   `._.'   `._*");
 console.log("*                                                *");
 console.log("**************************************************");
 console.log("*                                                *");
-console.log("*               2014 Owen Hindley                *");
+console.log("*               2014 Owen Hindley et al.         *");
 console.log("*               github.com/owenhindley           *");
 console.log("*                                                *");
 console.log("**************************************************");
@@ -83,47 +74,43 @@ var harpaFaces = {
 	"side" : [39,9]
 };
 
-// var gameView = new HarpaGameView();
-// gameView.init(INTERFACE_1_IP, front_patch, harpaFaces.front[0], harpaFaces.front[1]);
+var visualRenderer = new VisualRenderer();
 
-// scoreView.init(INTERFACE_2_IP, side_patch, harpaFaces.side[0], harpaFaces.side[1]);
-
-// Shared splat renderer
-var splatRenderer = new SplatRenderer();
-
-var splatterView = new HarpaSplatterView();
-splatterView.init(INTERFACE_1_IP, front_patch,
+var visualView = new VisualView();
+visualView.init(INTERFACE_1_IP, front_patch,
 	harpaFaces.front[0], harpaFaces.front[1],
-	splatRenderer, frontTransform);
+	visualRenderer, frontTransform);
 
-var secondSplatterView = new HarpaSplatterView();
-secondSplatterView.init(INTERFACE_2_IP, side_patch,
+var secondVisualView = new VisualView();
+secondVisualView.init(INTERFACE_2_IP, side_patch,
 	harpaFaces.side[0], harpaFaces.side[1],
-	splatRenderer, sideTransform);
+	visualRenderer, sideTransform);
 
 var renderTimer = new NanoTimer();
 renderTimer.setInterval(render.bind(this), '', '33m');
 
 var game = {};
 
-var socket = io('http://paint-splatter.herokuapp.com');
+/*
+var socket = io('http://');
 
 socket.on('connection', function (e) {
 	console.log("Connected to socket server.");
 })
 
 socket.on('blob', function(data) {
-	splatRenderer.addSplat(new Blob(data.x, data.y, data.color, data.weather, 0.6666));
+	VisualRenderer.addSplat(new Blob(data.x, data.y, data.color, data.weather, 0.6666));
 	
 	// Log blob in file
 	if(data.isGhost !== true) {
 		winston.info({data: data, time: new Date()});
 	}
 });
+*/
 
 function render() {
-	splatterView.render(game, "game");
-	secondSplatterView.render(game, "game");
+	visualView.render(game, "game");
+	secondVisualView.render(game, "game");
 };
 
 /*
@@ -157,11 +144,11 @@ var server = http.createServer(function(request, response){
 			break;
 
 			case "getGameCanvasSource":
-				responseText = splatterView.canvas.toDataURL();
+				responseText = visualView.canvas.toDataURL();
 			break;
 
 			case "getScoreCanvasSource":
-				responseText = secondSplatterView.canvas.toDataURL();
+				responseText = secondVisualView.canvas.toDataURL();
 			break;
 
 			case "stop":
