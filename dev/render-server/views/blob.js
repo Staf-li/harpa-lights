@@ -85,6 +85,8 @@ module.exports = (function Blob(x, y, color, weather, yScale) {
 
     if(windRotation < -Math.PI/2) windRotation = -Math.PI/2;
 
+    windRotation = 0.01;
+
     ctx.rotate(windRotation)
     ctx.translate(-_originalX * cw, -_originalY * ch * _yScale);
     

@@ -51,7 +51,7 @@ var SCREENSAVER_SERVER_IP = "tcp://127.0.0.1";
 
 // change between local & remote game servers
 // var GAME_SERVER_IP = "http://127.0.0.1";
-var GAME_SERVER_IP = "http://paint-splatter.herokuapp.com";//+ AppConfig.ips.game_server.url;
+var GAME_SERVER_IP = "http://paint.is";//+ AppConfig.ips.game_server.url;
 //
 var active = true;
 
