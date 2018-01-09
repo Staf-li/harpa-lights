@@ -28,10 +28,10 @@ module.exports = (function VisualRenderer() {
     ctx.fillRect(0, 0, cw, ch);
 
     ctx.fillStyle = "rgb(255, 255, 0)";
-    ctx.fillRect((1/cw * (heartData[0]/1024)) % cw, 0, cw/17, ch);
+    ctx.fillRect((_heartData[0]/255)*cw, 0, cw/17, ch);
 
     ctx.fillStyle = "rgb(0, 255, 255)";
-    ctx.fillRect(0, (1/cw * (heartData[1]/1024)) % ch, cw, ch/8);
+    ctx.fillRect(0, (1/cw * (_heartData[1]/255)) % ch, cw, ch/8);
   }
 
   return {
