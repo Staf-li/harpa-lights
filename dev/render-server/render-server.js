@@ -19,6 +19,9 @@ var VisualRenderer = require('./views/visual-renderer.js');
 var front_patch = require('./patchdata/front-main-patch-3-extended.js');
 var side_patch = require('./patchdata/side-patch-1.js');
 
+var net = require('net');
+var HEART_SERVER_IP = "192.168.1.64";
+
 var frontTransform = {
   t: {
   	x: 0,
@@ -90,6 +93,16 @@ var renderTimer = new NanoTimer();
 renderTimer.setInterval(render.bind(this), '', '33m');
 
 var game = {};
+
+var heartClient = new net.Socket();
+
+heartClient.connect(9090, HEART_SERVER_IP, function() {
+	console.log("Connected to heart server");
+});
+
+heartClient.on('data', function(data) {
+	visualRenderer.heartData(data);
+});
 
 /*
 var socket = io('http://');
