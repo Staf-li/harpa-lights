@@ -93,7 +93,7 @@ renderTimer.setInterval(render.bind(this), '', '33m');
 
 var game = {};
 
-var socket = io('http://localhost:9090');
+var socket = io('http://'+ HEART_SERVER_IP +':9090');
 
 socket.on('connection', function() {
 	console.log("Connect");

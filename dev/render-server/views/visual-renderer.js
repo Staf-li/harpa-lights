@@ -1,3 +1,6 @@
+var Heart = require("./heart.js");
+var BaseHeart = require("./BaseHeart.js");
+
 module.exports = (function VisualRenderer() {
   var _currentTime = +new Date();
 
@@ -5,6 +8,9 @@ module.exports = (function VisualRenderer() {
 
   var _heartData = [0, 0, 0];
 
+  var _hearts = [new Heart(), new Heart()]
+
+  var _baseHeart = new BaseHeart();
   function update() {
     // Tick the clock and cleanup old splats 
     var timeNow = +new Date();
@@ -24,14 +30,10 @@ module.exports = (function VisualRenderer() {
   }
 
   function render(ctx, cw, ch) {
-    ctx.fillStyle = "rgb(0, 0, 0)";
-    ctx.fillRect(0, 0, cw, ch);
-
-    ctx.fillStyle = "rgb(255, 255, 0)";
-    ctx.fillRect((_heartData[0]/255)*cw, 0, cw/17, ch);
-
-    ctx.fillStyle = "rgb(0, 255, 255)";
-    ctx.fillRect(0, (1/cw * (_heartData[1]/255)) % ch, cw, ch/8);
+    _baseHeart.render(ctx,cw,ch, "rgb(255, 0, 0)");
+    for(i in _hearts) {
+      _hearts[i].render(ctx, cw, ch, "rgb(0, 0, 255)", (_heartData[0]));
+    }
   }
 
   return {
