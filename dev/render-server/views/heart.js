@@ -3,29 +3,36 @@ module.exports = (function Heart(color) {
     var _killThisHeart = false;
     var _maxScale = 20;
     var _color = color;
-    var _heartHeight = 1;
-    var _heartWidth = 1;
      
     var render = function(ctx, cw, ch) {
         _scale += 0.05;
 
         ctx.save();
         ctx.strokeStyle = _color;
-        ctx.fillStyle = "rgb(0,0,0)";
-
-        ctx.translate(-_heartWidth/2, _heartHeight/2);
-        // ctx.transform(_scale, 0, 0, _scale, -_heartWidth/2, -_heartHeight/2);
         ctx.beginPath();
-        ctx.moveTo(10, 10);
-        ctx.lineTo(10, 5);
-        ctx.lineTo(5, 10);
+        ctx.bezierCurveTo(7.5, 3.7, 7.0, 2.5, 5.0, 2.5);
+        ctx.bezierCurveTo(2.0, 2.5, 2.0, 6.25, 2.0, 6.25);
+        ctx.bezierCurveTo(2.0, 8.0, 4.0, 10.2, 7.5, 12.0);
+        ctx.bezierCurveTo(11.0, 10.2, 13.0, 8.0, 13.0, 6.25);
+        ctx.bezierCurveTo(13.0, 6.25, 13.0, 2.5, 10.0, 2.5);
+        ctx.bezierCurveTo(8.5, 2.5, 7.5, 3.7, 7.5, 4.0);
         ctx.scale(_scale,_scale);
-        ctx.lineWidth = 1;
-        ctx.closePath();
         ctx.stroke();
-        ctx.fill()
-
         ctx.restore();
+        
+        ctx.save();
+        ctx.strokeStyle = "rgb(0,0,0)";
+        ctx.beginPath();
+        ctx.bezierCurveTo(7.5, 3.7, 7.0, 2.5, 5.0, 2.5);
+        ctx.bezierCurveTo(2.0, 2.5, 2.0, 6.25, 2.0, 6.25);
+        ctx.bezierCurveTo(2.0, 8.0, 4.0, 10.2, 7.5, 12.0);
+        ctx.bezierCurveTo(11.0, 10.2, 13.0, 8.0, 13.0, 6.25);
+        ctx.bezierCurveTo(13.0, 6.25, 13.0, 2.5, 10.0, 2.5);
+        ctx.bezierCurveTo(8.5, 2.5, 7.5, 3.7, 7.5, 4.0);
+        ctx.scale(_scale*0.9,_scale*0.9);
+        ctx.stroke();
+        ctx.restore();
+
     };
 
     var update = function() {
