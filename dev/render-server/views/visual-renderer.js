@@ -44,10 +44,10 @@ module.exports = (function VisualRenderer() {
   }
 
   function render(ctx, cw, ch) {
-    _baseHeart.render(ctx,cw,ch, "rgb(255, 0, 0)");
     for(i in _hearts) {
       _hearts[i].render(ctx, cw, ch);
     }
+    _baseHeart.render(ctx,cw,ch, "rgb(255, 0, 0)");
   }
 
   return {
