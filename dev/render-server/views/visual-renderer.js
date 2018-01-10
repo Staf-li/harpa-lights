@@ -8,20 +8,34 @@ module.exports = (function VisualRenderer() {
 
   var _heartData = [0, 0, 0];
 
-  var _hearts = [new Heart(), new Heart()]
+  var _hearts = [new Heart("rgb(0, 0, 255)")]
 
   var _baseHeart = new BaseHeart();
+
+  function addHeart(heart) {
+    _hearts.push(heart);
+  }
+
+  function cleanUp() {
+    for(var i in _hearts) {
+      if(_hearts[i].shouldKill()) {
+        _hearts.splice(i--, 1);
+      }
+    }
+  };
+
   function update() {
-    // Tick the clock and cleanup old splats 
-    var timeNow = +new Date();
+    cleanUp();
 
-    var deltaTime = timeNow - _currentTime;
-    _currentTime = timeNow;
+    for(var i in _hearts) {
+      _hearts[i].update();
+    }
 
-    var dt = deltaTime / OPTIMAL_FRAMERATE;
-
-    if(dt > 100) {
-        dt = 1;
+    for(var i in _heartData) {
+      console.log(i + ": " + _heartData[i]);
+      if (_heartData[i] > 140) {
+        addHeart(new Heart("rgb(0, 0, 255)"));
+      }
     }
   }
 
@@ -32,7 +46,7 @@ module.exports = (function VisualRenderer() {
   function render(ctx, cw, ch) {
     _baseHeart.render(ctx,cw,ch, "rgb(255, 0, 0)");
     for(i in _hearts) {
-      _hearts[i].render(ctx, cw, ch, "rgb(0, 0, 255)", (_heartData[0]));
+      _hearts[i].render(ctx, cw, ch);
     }
   }
 

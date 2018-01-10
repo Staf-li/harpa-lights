@@ -1,10 +1,16 @@
-module.exports = (function Heart(x, y) {
-
-    var render = function(ctx, cw, ch, color, heartRate) {
+module.exports = (function Heart(color) {
+    var _scale = 1;
+    var _killThisHeart = false;
+    var _maxScale = 8;
+    var _color = color;
+     
+    var render = function(ctx, cw, ch) {
+        _scale += 0.01;
+        
         ctx.save();
+        ctx.strokeStyle = _color;
 
-        ctx.strokeStyle = color;
-        ctx.transform(10*(heartRate/255)-2, 0, 0, 10*(heartRate/255)-2, 0, 0);
+        ctx.transform(_scale, 0, 0, _scale, 0, 0);
         ctx.beginPath();
         ctx.bezierCurveTo(7.5, 3.7, 7.0, 2.5, 5.0, 2.5);
         ctx.bezierCurveTo(2.0, 2.5, 2.0, 6.25, 2.0, 6.25);
@@ -18,7 +24,15 @@ module.exports = (function Heart(x, y) {
         ctx.restore();
     };
 
+    var update = function() {
+        if(_scale > _maxScale) {
+            _killThisHeart = true;
+        }
+    };
+
     return {
-        render: render
+        render: render,
+        update: update,
+        shouldKill: function() { return _killThisHeart; }
     }
 });
