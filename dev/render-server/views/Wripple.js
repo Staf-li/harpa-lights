@@ -1,6 +1,6 @@
-module.exports = (function Heart(color) {
+module.exports = (function Wripple(color) {
     var _scale = 1;
-    var _killThisHeart = false;
+    var _killThisWripple = false;
     var _maxScale = 100;
     var _color = color;
      
@@ -32,18 +32,17 @@ module.exports = (function Heart(color) {
         ctx.scale(_scale*0.9,_scale*0.9);
         ctx.stroke();
         ctx.restore();
-
     };
 
     var update = function() {
         if(_scale > _maxScale) {
-            _killThisHeart = true;
+            _killThisWripple = true;
         }
     };
 
     return {
         render: render,
         update: update,
-        shouldKill: function() { return _killThisHeart; }
+        shouldKill: function() { return _killThisWripple; }
     }
 });
