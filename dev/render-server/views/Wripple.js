@@ -1,11 +1,12 @@
 module.exports = (function Wripple(color) {
     var _scale = 1;
     var _killThisWripple = false;
-    var _maxScale = 100;
+    var _maxScale = 80;
     var _color = color;
+    var _scalingSpeed = 0.08;
      
     var render = function(ctx, cw, ch) {
-        _scale += 0.05;
+        _scale += _scalingSpeed;
 
         ctx.save();
         ctx.strokeStyle = _color;

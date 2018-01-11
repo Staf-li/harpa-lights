@@ -2,10 +2,13 @@ var Wripple = require("./Wripple.js");
 
 module.exports = (function BaseHeart(color) {
     var _color = color;
-    var _shouldEmit = false;
-		var _wripples = [];
-		var _thresholdHeartNumber = 140;
+		
+		var _hasEmittedInCycle = false;
+		var _threshHoldMet = false;
 		var _oldHeartNumber = 0;
+	
+		var _wripples = [];
+		var _thresholdHeartNumber = 180;
 
     function addWripple(wripple) {
       _wripples.push(wripple);
@@ -15,26 +18,36 @@ module.exports = (function BaseHeart(color) {
       addWripple(new Wripple(_color));
     };
 
-		function isRising(number) {
-			return _oldHeartNumber < number;
-		}; 
+		function isRising(currHeartNumbernumber) {
+			return _oldHeartNumber < currHeartNumber;
+		};
 
-    var update = function(heartData) {
+		function isFalling(currHeartNumber) {
+			return _oldHeartNumber > currHeartNumber;
+		};
+
+		function isThresholdMet (currHeartNumber) {
+			return currHeartNumber > _thresholdHeartNumber;
+		};
+
+    var update = function(currHeartNumber) {
 			cleanUp();
 
-			// TODO: use smith trigger
-			_shouldEmit = ((heartData > _thresholdHeartNumber) && isRising(heartData));
+			_threshHoldMet = isThresholdMet(currHeartNumber);
+			
+			if (isFalling(currHeartNumber) && !_threshHoldMet) {
+				_hasEmittedInCycle = false;
+			}
 
 			for(var i in _wripples) {
 				_wripples[i].update();
 			}
-			
-			console.log("heartData: ", heartData);
-			console.log("_thresholdHeartNumber: ", _thresholdHeartNumber);
-			if (_shouldEmit) {
-				console.log('Should add');
+
+			if (_threshHoldMet && !_hasEmittedInCycle) {
 				addWripple(new Wripple(_color));
+				_hasEmittedInCycle = true;
 			}
+			_oldHeartNumber = currHeartNumber;
     };
 
     function cleanUp() {
