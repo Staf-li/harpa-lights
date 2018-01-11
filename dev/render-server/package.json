@@ -3,7 +3,9 @@
   "version": "0.0.2",
   "description": "",
   "main": "",
-  "scripts": {},
+  "scripts": {
+  "start": "node render-server.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/owenhindley/harpa-lights/"

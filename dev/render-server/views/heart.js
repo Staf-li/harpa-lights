@@ -1,7 +1,7 @@
 module.exports = (function Heart(color) {
     var _scale = 1;
     var _killThisHeart = false;
-    var _maxScale = 20;
+    var _maxScale = 100;
     var _color = color;
      
     var render = function(ctx, cw, ch) {

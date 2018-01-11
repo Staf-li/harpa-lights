@@ -19,7 +19,7 @@ var VisualRenderer = require('./views/visual-renderer.js');
 var front_patch = require('./patchdata/front-main-patch-3-extended.js');
 var side_patch = require('./patchdata/side-patch-1.js');
 
-var HEART_SERVER_IP = "192.168.1.64";
+var HEART_SERVER_IP = "localhost";
 
 var frontTransform = {
   t: {
@@ -34,8 +34,8 @@ var frontTransform = {
 
 var sideTransform = {
   t: {
-  	x: 0,
-  	y: 0
+  	x: 40,
+  	y: -3
   },
   s: {
   	x: 1,
