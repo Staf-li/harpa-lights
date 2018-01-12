@@ -25,6 +25,7 @@ p.init = function(ip, patchdata, width, height, VisualRenderer, transform) {
 
 	this.VisualRenderer = VisualRenderer; 
 	this.transform = transform;
+	this.ctx.globalCompositeOperation = 'lighten';
 };
 
 p.render = function(game, mode) {

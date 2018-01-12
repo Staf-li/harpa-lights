@@ -25,7 +25,8 @@ module.exports = (function VisualRenderer() {
   };
 
   function render(ctx, cw, ch) {
-    ctx.globalCompositeOperation = 'xor';
+    ctx.clearRect(-cw-5, 0, 2*cw +5, ch*1.5);
+    ctx.fillRect(-cw-5, 0, 2*cw +5, ch*1.5);
     for(i in _hearts) {
       _hearts[i].render(ctx, cw, ch);
     };
