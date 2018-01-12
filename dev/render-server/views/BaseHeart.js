@@ -1,7 +1,7 @@
 var Wripple = require("./Wripple.js");
 
 module.exports = (function BaseHeart(color) {
-    var _color = color;
+  var _color = color;
 		
 	var _hasEmittedInCycle = false;
 	var _threshHoldMet = false;
@@ -30,7 +30,7 @@ module.exports = (function BaseHeart(color) {
 		return currHeartNumber > _thresholdHeartNumber;
 	};
 
-    var update = function(currHeartNumber) {
+  var update = function(currHeartNumber) {
 		cleanUp();
 
 		_threshHoldMet = isThresholdMet(currHeartNumber);
@@ -66,24 +66,41 @@ module.exports = (function BaseHeart(color) {
 			_wripples[i].render(ctx, cw, ch);
 		};
 
+
+		/*
+			cp1x	The x-coordinate of the first Bézier control point
+			cp1y	The y-coordinate of the first Bézier control point
+			cp2x	The x-coordinate of the second Bézier control point
+			cp2y	The y-coordinate of the second Bézier control point
+			x	The x-coordinate of the ending point
+			y	The y-coordinate of the ending point
+		*/
+
 		ctx.fillStyle = _color;
 		ctx.beginPath();
-		ctx.bezierCurveTo(7.5, 3.7, 7.0, 2.5, 5.0, 2.5);
-		ctx.bezierCurveTo(2.0, 2.5, 2.0, 6.25, 2.0, 6.25);
-		ctx.bezierCurveTo(2.0, 8.0, 4.0, 10.2, 7.5, 12.0);
-		ctx.bezierCurveTo(11.0, 10.2, 13.0, 8.0, 13.0, 6.25);
-		ctx.bezierCurveTo(13.0, 6.25, 13.0, 2.5, 10.0, 2.5);
-		ctx.bezierCurveTo(8.5, 2.5, 7.5, 3.7, 7.5, 4.0);
+
+		//corner
+		ctx.bezierCurveTo(20, 10, 20, 10, 20, 10);
+		ctx.bezierCurveTo(20, 10, 20, 10, 22, 6);
+		//corner
+		ctx.bezierCurveTo(20, 3, 20, 3, 20, 3);
+		//corner
+		ctx.bezierCurveTo(15, 3, 15, 3, 18, 3);
+		ctx.bezierCurveTo(15, 3, 15, 3, 12, 6);
+		//corner
+		ctx.bezierCurveTo(15, 10, 15, 10, 18, 10);
+		ctx.bezierCurveTo(15, 10, 15, 10, 19.5, 11);
+
 		ctx.closePath();
 		ctx.fill();
 		ctx.restore();
-    };
+  };
 
-    return {
+  return {
 		render: render,
 		update: update,
 		shouldEmit: function() {
 			return _shouldEmit;
 		}
-    };
+  };
 });
