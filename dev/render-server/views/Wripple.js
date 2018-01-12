@@ -3,7 +3,7 @@ module.exports = (function Wripple(color) {
     var _killThisWripple = false;
     var _maxScale = 80;
     var _color = color;
-    var _scalingSpeed = 0.8;
+    var _scalingSpeed = 0.2;
      
     var render = function(ctx, cw, ch) {
         _scale += _scalingSpeed;

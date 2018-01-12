@@ -15,7 +15,6 @@ module.exports = (function VisualRenderer() {
   
   function update() {
     for(i in _hearts) {
-      console.log(i, ":", _heartData[i]);
       _hearts[i].update(_heartData[i]);
     };
   };
