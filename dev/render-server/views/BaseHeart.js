@@ -1,4 +1,4 @@
-var Wripple = require("./Wripple.js");
+var Ripple = require("./Ripple.js");
 
 module.exports = (function BaseHeart(color) {
   var _color = color;
@@ -9,16 +9,16 @@ module.exports = (function BaseHeart(color) {
 	
 	var _oldHeartNumber = 0;
 
-	var _wripples = [];
+	var _ripples = [];
 	var _upperThresholdHeartNumber = 100;
 	var _lowerThresholdHeartNumber = 70;
 
-    function addWripple(wripple) {
-		_wripples.push(wripple);
+    function addRipple(ripple) {
+		_ripples.push(ripple);
     }
 
     var emit = function() {
-		addWripple(new Wripple(_color));
+		addRipple(new Ripple(_color));
     };
 
 	function isRising(currHeartNumber) {
@@ -36,27 +36,24 @@ module.exports = (function BaseHeart(color) {
 		_lowerThreshHoldMet = currHeartNumber < _lowerThresholdHeartNumber;
 
 		if (_hasEmittedInCycle && isFalling(currHeartNumber) && _lowerThreshHoldMet) {
-			console.log("lower threshold: ",currHeartNumber);
-
 			_hasEmittedInCycle = false;
 		}
 
-		for(var i in _wripples) {
-			_wripples[i].update();
+		for(var i in _ripples) {
+			_ripples[i].update();
 		}
 
 		if (_upperThreshHoldMet && !_hasEmittedInCycle && isRising(currHeartNumber)) {
-			console.log("upper threshold: ",currHeartNumber);
-			addWripple(new Wripple(_color));
+			addRipple(new Ripple(_color));
 			_hasEmittedInCycle = true;
 		}
 		_oldHeartNumber = currHeartNumber;
   };
 
     function cleanUp() {
-		for(var i in _wripples) {
-			if(_wripples[i].shouldKill()) {
-				_wripples.splice(i--, 1);
+		for(var i in _ripples) {
+			if(_ripples[i].shouldKill()) {
+				_ripples.splice(i--, 1);
 			}
 		}
     };
@@ -64,8 +61,8 @@ module.exports = (function BaseHeart(color) {
     var render = function(ctx, cw, ch) {
 		ctx.save();
 
-		for(i in _wripples) {
-			_wripples[i].render(ctx, cw, ch);
+		for(i in _ripples) {
+			_ripples[i].render(ctx, cw, ch);
 		};
 
 
