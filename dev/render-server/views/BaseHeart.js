@@ -58,6 +58,12 @@ module.exports = (function BaseHeart(color) {
 		}
     };
 
+		var _xInit = 15;
+    var _yInit = 5;
+
+    var _width = 8;
+    var _height = 6;
+
     var render = function(ctx, cw, ch) {
 		ctx.save();
 
@@ -65,30 +71,17 @@ module.exports = (function BaseHeart(color) {
 			_ripples[i].render(ctx, cw, ch);
 		};
 
-
-		/*
-			cp1x	The x-coordinate of the first Bézier control point
-			cp1y	The y-coordinate of the first Bézier control point
-			cp2x	The x-coordinate of the second Bézier control point
-			cp2y	The y-coordinate of the second Bézier control point
-			x	The x-coordinate of the ending point
-			y	The y-coordinate of the ending point
-		*/
-
 		ctx.fillStyle = _color;
 		ctx.beginPath();
 
-		//corner
-		ctx.bezierCurveTo(20, 10, 20, 10, 20, 10);
-		ctx.bezierCurveTo(20, 10, 20, 10, 22, 6);
-		//corner
-		ctx.bezierCurveTo(20, 3, 20, 3, 20, 3);
-		//corner
-		ctx.bezierCurveTo(15, 3, 15, 3, 18, 3);
-		ctx.bezierCurveTo(15, 3, 15, 3, 12, 6);
-		//corner
-		ctx.bezierCurveTo(15, 10, 15, 10, 18, 10);
-		ctx.bezierCurveTo(15, 10, 15, 10, 19.5, 11);
+		ctx.moveTo(_xInit+1, _yInit);
+		ctx.lineTo(_xInit, _yInit+_height);
+		
+		ctx.lineTo(_xInit, _yInit+_height-1);
+
+		ctx.lineTo(_xInit+_width, _yInit+_height);
+
+		ctx.lineTo(_xInit+_width-3, _yInit);
 
 		ctx.closePath();
 		ctx.fill();
