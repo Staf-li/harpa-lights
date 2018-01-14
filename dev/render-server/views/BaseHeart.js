@@ -58,13 +58,15 @@ module.exports = (function BaseHeart(color) {
 		}
     };
 
-		var _xInit = 15;
-    var _yInit = 5;
+		var _xInit = 0;
+    var _yInit = 0;
 
     var _width = 8;
     var _height = 6;
 
     var render = function(ctx, cw, ch) {
+		_xInit = (cw-_width)/2;
+		_yInit = (ch-_height)/2;
 		ctx.save();
 
 		for(i in _ripples) {
