@@ -96,15 +96,21 @@ module.exports = function BaseHeart(color) {
     ctx.fillStyle = _color;
     ctx.beginPath();
 
-    ctx.moveTo(_scale * 1, 0);
+    ctx.moveTo(_scale * 2, 0);
 
-    ctx.lineTo(0, _scale * _height);
+    ctx.lineTo(0, _scale * 2);
 
-    ctx.lineTo(0, _scale * (_height - 1));
+    ctx.lineTo(0, _scale * 3);
 
-    ctx.lineTo(_scale * _width, _scale * _height);
+    ctx.lineTo(_scale * 3, _scale * 6);
 
-    ctx.lineTo(_scale * (_width - 3), 0);
+    ctx.lineTo(_scale * 6, _scale * 6);
+
+    ctx.lineTo(_scale * 8, _scale * 4);
+
+    ctx.lineTo(_scale * 7, _scale * 2);
+
+    ctx.lineTo(_scale * 4, 0);
 
     ctx.closePath();
 
