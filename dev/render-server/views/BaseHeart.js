@@ -1,100 +1,128 @@
-var Ripple = require("./Ripple.js");
+var Ripple = require('./Ripple.js');
 
-module.exports = (function BaseHeart(color) {
+module.exports = function BaseHeart(color) {
   var _color = color;
-		
-	var _hasEmittedInCycle = false;
-	var _upperThreshHoldMet = false;
-	var _lowerThreshHoldMet = false;
-	
-	var _oldHeartNumber = 0;
+  var _scale = 1;
+  var _maxScale = 1.1;
+  var _minScale = 0;
 
-	var _ripples = [];
-	var _upperThresholdHeartNumber = 100;
-	var _lowerThresholdHeartNumber = 70;
+  var _hasEmittedInCycle = false;
+  var _upperThreshHoldMet = false;
+  var _lowerThreshHoldMet = false;
+  var _scalingSpeed = 0.01;
 
-    function addRipple(ripple) {
-		_ripples.push(ripple);
-    }
+  var _oldHeartNumber = 0;
+  var _currHeartNumber = 0;
 
-    var emit = function() {
-		addRipple(new Ripple(_color));
-    };
+  var _ripples = [];
+  var _upperThresholdHeartNumber = 100;
+  var _lowerThresholdHeartNumber = 70;
 
-	function isRising(currHeartNumber) {
-		return _oldHeartNumber < currHeartNumber;
-	};
+  function addRipple(ripple) {
+    _ripples.push(ripple);
+  }
 
-	function isFalling(currHeartNumber) {
-		return _oldHeartNumber > currHeartNumber;
-	};
-
-  var update = function(currHeartNumber) {
-		cleanUp();
-
-		_upperThreshHoldMet = currHeartNumber > _upperThresholdHeartNumber;
-		_lowerThreshHoldMet = currHeartNumber < _lowerThresholdHeartNumber;
-
-		if (_hasEmittedInCycle && isFalling(currHeartNumber) && _lowerThreshHoldMet) {
-			_hasEmittedInCycle = false;
-		}
-
-		for(var i in _ripples) {
-			_ripples[i].update();
-		}
-
-		if (_upperThreshHoldMet && !_hasEmittedInCycle && isRising(currHeartNumber)) {
-			addRipple(new Ripple(_color));
-			_hasEmittedInCycle = true;
-		}
-		_oldHeartNumber = currHeartNumber;
+  var emit = function() {
+    addRipple(new Ripple(_color));
   };
 
-    function cleanUp() {
-		for(var i in _ripples) {
-			if(_ripples[i].shouldKill()) {
-				_ripples.splice(i--, 1);
-			}
-		}
-    };
+  function isRising(currHeartNumber) {
+    return _oldHeartNumber < currHeartNumber;
+  }
 
-		var _xInit = 0;
-    var _yInit = 0;
+  function isFalling(currHeartNumber) {
+    return _oldHeartNumber > currHeartNumber;
+  }
 
-    var _width = 8;
-    var _height = 6;
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
-    var render = function(ctx, cw, ch) {
-		_xInit = (cw-_width)/2;
-		_yInit = (ch-_height)/2;
-		ctx.save();
+  var update = function(currHeartNumber) {
+    cleanUp();
+    console.log('currHeartNumber: ', currHeartNumber);
+    _upperThreshHoldMet = currHeartNumber > _upperThresholdHeartNumber;
+    _lowerThreshHoldMet = currHeartNumber < _lowerThresholdHeartNumber;
 
-		for(i in _ripples) {
-			_ripples[i].render(ctx, cw, ch);
-		};
+    if (_hasEmittedInCycle && isFalling(currHeartNumber) && _lowerThreshHoldMet) {
+      _hasEmittedInCycle = false;
+    }
 
-		ctx.fillStyle = _color;
-		ctx.beginPath();
+    for (var i in _ripples) {
+      _ripples[i].update();
+    }
 
-		ctx.moveTo(_xInit+1, _yInit);
-		ctx.lineTo(_xInit, _yInit+_height);
-		
-		ctx.lineTo(_xInit, _yInit+_height-1);
+    if (_upperThreshHoldMet && !_hasEmittedInCycle && isRising(currHeartNumber)) {
+      addRipple(new Ripple(_color));
+      _hasEmittedInCycle = true;
+    }
 
-		ctx.lineTo(_xInit+_width, _yInit+_height);
+    if (isFalling(currHeartNumber)) {
+      _scale = _scale > _minScale ? _scale - _scalingSpeed : _scale;
+    } else if (isRising(currHeartNumber)) {
+      _scale = _scale < _maxScale ? _scale + _scalingSpeed : _scale;
+    } else {
+      var randInt = getRandomInt(0.1, -0.2);
+      var scaleNum = _scale + randInt;
+      _scale = scaleNum > _minScale && scaleNum < _maxScale ? scaleNum : _scale;
+    }
 
-		ctx.lineTo(_xInit+_width-3, _yInit);
+    _oldHeartNumber = currHeartNumber;
+  };
 
-		ctx.closePath();
-		ctx.fill();
-		ctx.restore();
+  function cleanUp() {
+    for (var i in _ripples) {
+      if (_ripples[i].shouldKill()) {
+        _ripples.splice(i--, 1);
+      }
+    }
+  }
+
+  var _xInit = 0;
+  var _yInit = 0;
+
+  var _width = 8;
+  var _height = 6;
+
+  var render = function(ctx, cw, ch) {
+    _xInit = (cw - _width) / 2;
+    _yInit = (ch - _height) / 2;
+    ctx.save();
+
+    for (i in _ripples) {
+      _ripples[i].render(ctx, cw, ch);
+    }
+
+    _xTranslate = (cw - _width * _scale) / 2;
+    _yTranslate = (ch - _height * _scale) / 2;
+
+    ctx.translate(_xTranslate, _yTranslate);
+
+    ctx.fillStyle = _color;
+    ctx.beginPath();
+
+    ctx.moveTo(_scale * 1, 0);
+
+    ctx.lineTo(0, _scale * _height);
+
+    ctx.lineTo(0, _scale * (_height - 1));
+
+    ctx.lineTo(_scale * _width, _scale * _height);
+
+    ctx.lineTo(_scale * (_width - 3), 0);
+
+    ctx.closePath();
+
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
   };
 
   return {
-		render: render,
-		update: update,
-		shouldEmit: function() {
-			return _shouldEmit;
-		}
+    render: render,
+    update: update,
+    shouldEmit: function() {
+      return _shouldEmit;
+    },
   };
-});
+};
