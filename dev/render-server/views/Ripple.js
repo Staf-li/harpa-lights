@@ -1,4 +1,4 @@
-module.exports = function Ripple(color) {
+module.exports = function Ripple(color, createdAt) {
   var _scale = 1;
   var _killThisRipple = false;
   var _maxScale = 80;
@@ -9,6 +9,8 @@ module.exports = function Ripple(color) {
   var _yTranslate = 0;
   var _width = 8;
   var _height = 6;
+
+  var createdAt = createdAt;
 
   function scale(point, offset) {
     return point;
@@ -25,7 +27,7 @@ module.exports = function Ripple(color) {
     ctx.translate(_xTranslate, _yTranslate);
 
     ctx.strokeStyle = _color;
-    ctx.lineWidth = 0.2;
+    ctx.lineWidth = 0.5;
 
     ctx.beginPath();
 
@@ -61,6 +63,7 @@ module.exports = function Ripple(color) {
   return {
     render: render,
     update: update,
+    createdAt: createdAt,
     shouldKill: function() {
       return _killThisRipple;
     },

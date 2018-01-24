@@ -6,6 +6,11 @@ module.exports = function BaseHeart(color) {
   var _maxScale = 1.1;
   var _minScale = 0;
 
+  var _minEmitInterval = 500; 
+  var _maxRippleAmount = 15;
+
+  var _maxTimeBetweenEmits = 1;
+
   var _hasEmittedInCycle = false;
   var _upperThreshHoldMet = false;
   var _lowerThreshHoldMet = false;
@@ -23,11 +28,19 @@ module.exports = function BaseHeart(color) {
   }
 
   var emit = function() {
-    addRipple(new Ripple(_color));
+    addRipple(new Ripple(_color, new Date().getTime()));
   };
 
   function isRising(currHeartNumber) {
     return _oldHeartNumber < currHeartNumber;
+  }
+
+  function isExceedingRateLimit(){
+    if (_ripples.length > 5) {
+      return (_minEmitInterval > +new Date() - _ripples[_ripples.length-5].createdAt) || (_ripples.length > _maxRippleAmount);
+    } else{
+      return false;
+    }
   }
 
   function isFalling(currHeartNumber) {
@@ -40,7 +53,6 @@ module.exports = function BaseHeart(color) {
 
   var update = function(currHeartNumber) {
     cleanUp();
-    console.log('currHeartNumber: ', currHeartNumber);
     _upperThreshHoldMet = currHeartNumber > _upperThresholdHeartNumber;
     _lowerThreshHoldMet = currHeartNumber < _lowerThresholdHeartNumber;
 
@@ -52,7 +64,7 @@ module.exports = function BaseHeart(color) {
       _ripples[i].update();
     }
 
-    if (_upperThreshHoldMet && !_hasEmittedInCycle && isRising(currHeartNumber)) {
+    if (_upperThreshHoldMet && !_hasEmittedInCycle && isRising(currHeartNumber) && !isExceedingRateLimit()) {
       addRipple(new Ripple(_color));
       _hasEmittedInCycle = true;
     }
