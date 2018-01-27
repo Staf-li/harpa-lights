@@ -27,7 +27,7 @@ module.exports = function Ripple(color, createdAt) {
     ctx.translate(_xTranslate, _yTranslate);
 
     ctx.strokeStyle = _color;
-    ctx.lineWidth = 0.5;
+    ctx.lineWidth = 0.8;
 
     ctx.beginPath();
 

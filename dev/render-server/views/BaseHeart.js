@@ -36,7 +36,7 @@ module.exports = function BaseHeart(color) {
   }
 
   function isExceedingRateLimit(){
-    if (_ripples.length > 5) {
+    if (_ripples.length > 10) {
       return (_minEmitInterval > +new Date() - _ripples[_ripples.length-5].createdAt) || (_ripples.length > _maxRippleAmount);
     } else{
       return false;
