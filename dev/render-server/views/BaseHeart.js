@@ -35,14 +35,6 @@ module.exports = function BaseHeart(color) {
     return _oldHeartNumber < currHeartNumber;
   }
 
-  function isExceedingRateLimit(){
-    if (_ripples.length > 10) {
-      return (_minEmitInterval > +new Date() - _ripples[_ripples.length-5].createdAt) || (_ripples.length > _maxRippleAmount);
-    } else{
-      return false;
-    }
-  }
-
   function isFalling(currHeartNumber) {
     return _oldHeartNumber > currHeartNumber;
   }
@@ -64,7 +56,7 @@ module.exports = function BaseHeart(color) {
       _ripples[i].update();
     }
 
-    if (_upperThreshHoldMet && !_hasEmittedInCycle && isRising(currHeartNumber) && !isExceedingRateLimit()) {
+    if (_upperThreshHoldMet && !_hasEmittedInCycle && isRising(currHeartNumber)) {
       addRipple(new Ripple(_color));
       _hasEmittedInCycle = true;
     }
