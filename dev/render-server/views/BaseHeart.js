@@ -4,24 +4,10 @@ module.exports = function BaseHeart(color) {
   var _color = color;
   var _scale = 1;
   var _maxScale = 1.1;
-  var _minScale = 0;
-
-  var _minEmitInterval = 500; 
-  var _maxRippleAmount = 15;
-
-  var _maxTimeBetweenEmits = 1;
-
-  var _hasEmittedInCycle = false;
-  var _upperThreshHoldMet = false;
-  var _lowerThreshHoldMet = false;
+  
   var _scalingSpeed = 0.01;
 
-  var _oldHeartNumber = 0;
-  var _currHeartNumber = 0;
-
   var _ripples = [];
-  var _upperThresholdHeartNumber = 100;
-  var _lowerThresholdHeartNumber = 70;
 
   function addRipple(ripple) {
     _ripples.push(ripple);
@@ -31,47 +17,12 @@ module.exports = function BaseHeart(color) {
     addRipple(new Ripple(_color, new Date().getTime()));
   };
 
-  function isRising(currHeartNumber) {
-    return _oldHeartNumber < currHeartNumber;
-  }
-
-  function isFalling(currHeartNumber) {
-    return _oldHeartNumber > currHeartNumber;
-  }
-
-  function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
   var update = function(currHeartNumber) {
     cleanUp();
-    _upperThreshHoldMet = currHeartNumber > _upperThresholdHeartNumber;
-    _lowerThreshHoldMet = currHeartNumber < _lowerThresholdHeartNumber;
-
-    if (_hasEmittedInCycle && isFalling(currHeartNumber) && _lowerThreshHoldMet) {
-      _hasEmittedInCycle = false;
-    }
-
+   
     for (var i in _ripples) {
       _ripples[i].update();
     }
-
-    if (_upperThreshHoldMet && !_hasEmittedInCycle && isRising(currHeartNumber)) {
-      addRipple(new Ripple(_color));
-      _hasEmittedInCycle = true;
-    }
-
-    if (isFalling(currHeartNumber)) {
-      _scale = _scale > _minScale ? _scale - _scalingSpeed : _scale;
-    } else if (isRising(currHeartNumber)) {
-      _scale = _scale < _maxScale ? _scale + _scalingSpeed : _scale;
-    } else {
-      var randInt = getRandomInt(0.1, -0.2);
-      var scaleNum = _scale + randInt;
-      _scale = scaleNum > _minScale && scaleNum < _maxScale ? scaleNum : _scale;
-    }
-
-    _oldHeartNumber = currHeartNumber;
   };
 
   function cleanUp() {
@@ -117,8 +68,6 @@ module.exports = function BaseHeart(color) {
     ctx.lineTo(_scale * 4, 0);
 
     ctx.closePath();
-
-    ctx.closePath();
     ctx.fill();
     ctx.restore();
   };
@@ -126,8 +75,6 @@ module.exports = function BaseHeart(color) {
   return {
     render: render,
     update: update,
-    shouldEmit: function() {
-      return _shouldEmit;
-    },
+    emit: emit
   };
 };

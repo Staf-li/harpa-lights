@@ -15,13 +15,12 @@ module.exports = function VisualRenderer() {
 
   function update() {
     for (i in _hearts) {
-      console.log(i, ' : ', _heartData[i]);
       _hearts[i].update(_heartData[i]);
     }
   }
 
-  function heartData(data) {
-    _heartData = data;
+  function upDateheartData(index) {
+    _hearts[index].emit();
   }
 
   function render(ctx, cw, ch) {
@@ -33,7 +32,7 @@ module.exports = function VisualRenderer() {
   }
 
   return {
-    heartData: heartData,
+    upDateheartData: upDateheartData,
     update: update,
     render: render,
   };

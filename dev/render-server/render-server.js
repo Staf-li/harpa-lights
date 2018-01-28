@@ -19,7 +19,7 @@ var VisualRenderer = require('./views/visual-renderer.js');
 var front_patch = require('./patchdata/front-main-patch-3-extended.js');
 var side_patch = require('./patchdata/side-patch-1.js');
 
-var HEART_SERVER_IP = '172.20.10.14';
+var HEART_SERVER_IP = 'localhost';
 
 var frontTransform = {
   t: {
@@ -108,8 +108,16 @@ socket.on('connection', function() {
   console.log('Connect');
 });
 
-socket.on('data', function(data) {
-  visualRenderer.heartData(data);
+socket.on('heartDataOne', function(data) {
+  visualRenderer.upDateheartData(0);
+});
+
+socket.on('heartDataTwo', function(data) {
+  visualRenderer.upDateheartData(1);
+});
+
+socket.on('heartDataThree', function(data) {
+  visualRenderer.upDateheartData(2);
 });
 
 /*
