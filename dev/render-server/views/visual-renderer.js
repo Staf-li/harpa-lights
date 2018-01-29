@@ -8,9 +8,9 @@ module.exports = function VisualRenderer() {
   var _heartData = [0, 0, 0];
 
   var _hearts = [
-    new BaseHeart('rgb(0, 0, 255)'),
-    new BaseHeart('rgb(0, 255, 0)'),
     new BaseHeart('rgb(255, 0 , 0)'),
+    new BaseHeart('rgb(248, 231, 28)'),
+    new BaseHeart('rgb(19, 67, 254)'),
   ];
 
   function update() {

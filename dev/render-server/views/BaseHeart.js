@@ -3,13 +3,19 @@ var Ripple = require('./Ripple.js');
 module.exports = function BaseHeart(color) {
   var _color = color;
   var _scale = 1;
-  var _maxScale = 1.1;
+  var _maxScale = 1.2;
+  var _minScale =  Math.random() * (0.5 - 0.1) + 0.1;
+  var _minScaleSpeed = 0.001;
+  var _maxScaleSpeed = 0.005;
   
-  var _scalingSpeed = 0.01;
+  var _isExpanding = false;
+
+  var _scalingSpeed = Math.random() * (_maxScaleSpeed - _minScaleSpeed) + _minScaleSpeed;
 
   var _ripples = [];
 
   function addRipple(ripple) {
+    console.log('Add ripple');
     _ripples.push(ripple);
   }
 
@@ -17,9 +23,23 @@ module.exports = function BaseHeart(color) {
     addRipple(new Ripple(_color, new Date().getTime()));
   };
 
+  function updateScale(scale){
+    if(_isExpanding) {
+      if(scale > _maxScale){
+        _isExpanding = false;
+      }
+      return scale + _scalingSpeed;
+    }
+    if (scale < _minScale) {
+      _isExpanding = true;
+    }
+    return scale - _scalingSpeed;
+  };
+
   var update = function(currHeartNumber) {
     cleanUp();
-   
+    
+    _scale = updateScale(_scale);
     for (var i in _ripples) {
       _ripples[i].update();
     }
