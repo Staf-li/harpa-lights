@@ -20,8 +20,11 @@ module.exports = function BaseHeart(color) {
   }
 
   var emit = function() {
+    _isExpanding = true;
     addRipple(new Ripple(_color, new Date().getTime()));
   };
+
+  // setInterval(emit, Math.random() * (10000 - 500) + 500);
 
   function updateScale(scale){
     if(_isExpanding) {
@@ -63,7 +66,7 @@ module.exports = function BaseHeart(color) {
       _ripples[i].render(ctx, cw, ch);
     }
 
-    _xTranslate = (cw - _width * _scale) / 2;
+    _xTranslate = ((cw - _width * _scale) / 2)-10;
     _yTranslate = (ch - _height * _scale) / 2;
 
     ctx.translate(_xTranslate, _yTranslate);

@@ -3,7 +3,7 @@ module.exports = function Ripple(color, createdAt) {
   var _killThisRipple = false;
   var _maxScale = 80;
   var _color = color;
-  var _scalingSpeed = 0.02;
+  var _scalingSpeed = 0.015;
 
   var _xTranslate = 0;
   var _yTranslate = 0;
@@ -21,7 +21,7 @@ module.exports = function Ripple(color, createdAt) {
 
     ctx.save();
 
-    _xTranslate = (cw - _width * _scale) / 2;
+    _xTranslate = ((cw - _width * _scale) / 2)-10;
     _yTranslate = (ch - _height * _scale) / 2;
 
     ctx.translate(_xTranslate, _yTranslate);

@@ -10,7 +10,7 @@ module.exports = function VisualRenderer() {
   var _hearts = [
     new BaseHeart('rgb(255, 0 , 0)'),
     new BaseHeart('rgb(248, 231, 28)'),
-    new BaseHeart('rgb(19, 67, 254)'),
+    new BaseHeart('rgb(111, 162, 248)'),
   ];
 
   function update() {
