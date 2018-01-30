@@ -1,6 +1,6 @@
 var Ripple = require('./Ripple.js');
 
-module.exports = function BaseHeart(color) {
+module.exports = function BaseHeart(color, rippleScalingSpeed) {
   var _color = color;
   var _scale = 1;
   var _maxScale = 1.2;
@@ -21,10 +21,10 @@ module.exports = function BaseHeart(color) {
 
   var emit = function() {
     _isExpanding = true;
-    addRipple(new Ripple(_color, new Date().getTime()));
+    addRipple(new Ripple(_color, new Date().getTime(), rippleScalingSpeed));
   };
 
-  // setInterval(emit, Math.random() * (10000 - 500) + 500);
+  setInterval(emit, Math.random() * (10000 - 500) + 500);
 
   function updateScale(scale){
     if(_isExpanding) {

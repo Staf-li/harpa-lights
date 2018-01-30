@@ -1,9 +1,9 @@
-module.exports = function Ripple(color, createdAt) {
+module.exports = function Ripple(color, createdAt, rippleScalingSpeed) {
   var _scale = 1;
   var _killThisRipple = false;
   var _maxScale = 80;
   var _color = color;
-  var _scalingSpeed = 0.015;
+  var _scalingSpeed = rippleScalingSpeed;
 
   var _xTranslate = 0;
   var _yTranslate = 0;
