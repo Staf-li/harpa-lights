@@ -7,6 +7,8 @@ module.exports = function BaseHeart(color, rippleScalingSpeed) {
   var _minScale =  Math.random() * (0.5 - 0.1) + 0.1;
   var _minScaleSpeed = 0.001;
   var _maxScaleSpeed = 0.005;
+
+  var _maxRipppleCount = 200;
   
   var _isExpanding = false;
 
@@ -46,6 +48,12 @@ module.exports = function BaseHeart(color, rippleScalingSpeed) {
     for (var i in _ripples) {
       _ripples[i].update();
     }
+
+    if (_ripples.length > _maxRipppleCount) {
+      while(_maxRipppleCount < _ripples.length) {
+        _ripples.splice(0, 1);
+      }
+    }
   };
 
   function cleanUp() {
@@ -55,6 +63,7 @@ module.exports = function BaseHeart(color, rippleScalingSpeed) {
       }
     }
   }
+
 
   var _width = 8;
   var _height = 6;
