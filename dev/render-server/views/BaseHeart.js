@@ -4,7 +4,7 @@ module.exports = function BaseHeart(color, rippleScalingSpeed) {
   var _color = color;
   var _scale = 1;
   var _maxScale = 1.2;
-  var _minScale =  Math.random() * (0.5 - 0.1) + 0.1;
+  var _minScale =  Math.random() * (0.8 - 0.5) + 0.5;
   var _minScaleSpeed = 0.001;
   var _maxScaleSpeed = 0.005;
 
@@ -26,8 +26,6 @@ module.exports = function BaseHeart(color, rippleScalingSpeed) {
     console.log('emit: ', date, ' from ', color);
     addRipple(new Ripple(_color, date.getTime(), rippleScalingSpeed));
   };
-
-  setInterval(emit, Math.random() * (10000 - 500) + 500);
 
   function updateScale(scale){
     if(_isExpanding) {
@@ -88,23 +86,33 @@ module.exports = function BaseHeart(color, rippleScalingSpeed) {
 
     ctx.lineTo(_scale * 1, _scale * 1);
 
+    ctx.lineTo(_scale * 1, _scale * 1);
+
     ctx.lineTo(_scale * 1, _scale * 2);
 
     ctx.lineTo(_scale * 2, _scale * 3);
-
-    ctx.lineTo(_scale * 4, _scale * 5);
     
-    ctx.lineTo(_scale * 6, _scale * 3);
+    ctx.lineTo(_scale * 3, _scale * 4);
 
-    ctx.lineTo(_scale * 7, _scale * 2);
+    ctx.lineTo(_scale * 5, _scale * 5); //midja
 
-    ctx.lineTo(_scale * 7, _scale * 1);
+    ctx.lineTo(_scale * 7, _scale * 4);
 
-    ctx.lineTo(_scale * 6, _scale * 0);
+    ctx.lineTo(_scale * 8, _scale * 3);
 
-    ctx.lineTo(_scale * 5, _scale * 0);
+    ctx.lineTo(_scale * 9, _scale * 2);
 
-    ctx.lineTo(_scale * 4, _scale * 1);
+    ctx.lineTo(_scale * 9, _scale * 1);
+
+    ctx.lineTo(_scale * 8, _scale * 0);
+
+    ctx.lineTo(_scale * 7, _scale * 0);
+
+    ctx.lineTo(_scale * 6, _scale * 0.5);
+
+    ctx.lineTo(_scale * 5, _scale * 1); //midja
+
+    ctx.lineTo(_scale * 4, _scale * 0.5);
 
     ctx.lineTo(_scale * 3, _scale * 0);
 

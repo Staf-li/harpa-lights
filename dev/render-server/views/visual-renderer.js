@@ -8,14 +8,11 @@ module.exports = function VisualRenderer() {
   var _heartData = [0, 0, 0];
 
   var _hearts = [
-        // new BaseHeart('rgb(111, 162, 248)', 0.020),
-  new BaseHeart('rgb(64, 102, 160)', 0.020),
-
-    // new BaseHeart('rgb(0, 0, 255)', 0.023), //00
-    new BaseHeart('rgb(255, 0, 0)', 0.017), //01
+    new BaseHeart('rgb(64, 102, 160)', 0.020), //01
+    new BaseHeart('rgb(255, 0, 0)', 0.017), //02
     // new BaseHeart('rgb(0, 255, 0)', 0.027), //02
-
-
+    // new BaseHeart('rgb(111, 162, 248)', 0.020),
+    // new BaseHeart('rgb(0, 0, 255)', 0.023), //00
     // new BaseHeart('rgb(64, 102, 160)', 0.020),
     // new BaseHeart('rgb(255, 253, 125)', 0.010),
     // new BaseHeart('rgb(255, 0, 0)', 0.015),
@@ -30,6 +27,7 @@ module.exports = function VisualRenderer() {
     }
   }
 
+  
   function upDateheartData(index) {
     _hearts[index].emit();
   }

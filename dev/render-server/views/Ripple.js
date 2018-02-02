@@ -21,8 +21,8 @@ module.exports = function Ripple(color, createdAt, rippleScalingSpeed) {
 
     ctx.save();
 
-    _xTranslate = ((cw - _width * _scale) / 2)-10;
-    _yTranslate = (ch - _height * _scale) / 2;
+    _xTranslate = ((cw - _width * _scale) / 2)-11;
+    _yTranslate = ((ch - _height * _scale) / 2)+0.5;
 
     ctx.translate(_xTranslate, _yTranslate);
 
@@ -35,23 +35,33 @@ module.exports = function Ripple(color, createdAt, rippleScalingSpeed) {
 
     ctx.lineTo(_scale * 1, _scale * 1);
 
+    ctx.lineTo(_scale * 1, _scale * 1);
+
     ctx.lineTo(_scale * 1, _scale * 2);
 
     ctx.lineTo(_scale * 2, _scale * 3);
-
-    ctx.lineTo(_scale * 4, _scale * 5);
     
-    ctx.lineTo(_scale * 6, _scale * 3);
+    ctx.lineTo(_scale * 3, _scale * 4);
 
-    ctx.lineTo(_scale * 7, _scale * 2);
+    ctx.lineTo(_scale * 5, _scale * 5); //midja
 
-    ctx.lineTo(_scale * 7, _scale * 1);
+    ctx.lineTo(_scale * 7, _scale * 4);
 
-    ctx.lineTo(_scale * 6, _scale * 0);
+    ctx.lineTo(_scale * 8, _scale * 3);
 
-    ctx.lineTo(_scale * 5, _scale * 0);
+    ctx.lineTo(_scale * 9, _scale * 2);
 
-    ctx.lineTo(_scale * 4, _scale * 1);
+    ctx.lineTo(_scale * 9, _scale * 1);
+
+    ctx.lineTo(_scale * 8, _scale * 0);
+
+    ctx.lineTo(_scale * 7, _scale * 0);
+
+    ctx.lineTo(_scale * 6, _scale * 0.5);
+
+    ctx.lineTo(_scale * 5, _scale * 1); //midja
+
+    ctx.lineTo(_scale * 4, _scale * 0.5);
 
     ctx.lineTo(_scale * 3, _scale * 0);
 
