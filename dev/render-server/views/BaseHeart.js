@@ -22,9 +22,9 @@ module.exports = function BaseHeart(color, rippleScalingSpeed) {
 
   var emit = function() {
     _isExpanding = true;
-    date = new Date().getTime();
+    date = new Date();
     console.log('emit: ', date, ' from ', color);
-    addRipple(new Ripple(_color, date, rippleScalingSpeed));
+    addRipple(new Ripple(_color, date.getTime(), rippleScalingSpeed));
   };
 
   setInterval(emit, Math.random() * (10000 - 500) + 500);
