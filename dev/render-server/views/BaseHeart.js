@@ -17,16 +17,17 @@ module.exports = function BaseHeart(color, rippleScalingSpeed) {
   var _ripples = [];
 
   function addRipple(ripple) {
-    console.log('Add ripple');
     _ripples.push(ripple);
   }
 
   var emit = function() {
     _isExpanding = true;
-    addRipple(new Ripple(_color, new Date().getTime(), rippleScalingSpeed));
+    date = new Date().getTime();
+    console.log('emit: ', date, ' from ', color);
+    addRipple(new Ripple(_color, date, rippleScalingSpeed));
   };
 
-  // setInterval(emit, Math.random() * (10000 - 500) + 500);
+  setInterval(emit, Math.random() * (10000 - 500) + 500);
 
   function updateScale(scale){
     if(_isExpanding) {

@@ -12,13 +12,13 @@ module.exports = function VisualRenderer() {
     // new BaseHeart('rgb(255, 253, 125)', 0.010),
     // new BaseHeart('rgb(255, 0, 0)', 0.015),
 
-    // new BaseHeart('rgb(0, 0, 255)', 0.020),
-    // new BaseHeart('rgb(255, 0, 0)', 0.015),
-    // new BaseHeart('rgb(0, 255, 0)', 0.015),
+    new BaseHeart('rgb(0, 0, 255)', 0.023),
+    new BaseHeart('rgb(255, 0, 0)', 0.017),
+    new BaseHeart('rgb(0, 255, 0)', 0.027),
 
-    new BaseHeart('rgb(255, 0, 0)', 0.015),
-    new BaseHeart('rgb(248, 231, 28)', 0.010),
-    new BaseHeart('rgb(111, 162, 248)', 0.020),
+    // new BaseHeart('rgb(255, 0, 0)', 0.015),
+    // new BaseHeart('rgb(248, 231, 28)', 0.010),
+    // new BaseHeart('rgb(111, 162, 248)', 0.020),
   ];
 
   function update() {
