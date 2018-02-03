@@ -7,6 +7,8 @@ module.exports = function BaseHeart(color, rippleScalingSpeed) {
   var _minScale =  Math.random() * (0.8 - 0.5) + 0.5;
   var _minScaleSpeed = 0.001;
   var _maxScaleSpeed = 0.005;
+  
+  var _timeSinceLastEmit = new Date().getTime();
 
   var _maxRipppleCount = 200;
   
@@ -23,6 +25,9 @@ module.exports = function BaseHeart(color, rippleScalingSpeed) {
   var emit = function() {
     _scale = _maxScale;
     date = new Date();
+
+    _timeSinceLastEmit = date.getTime();
+
     console.log('emit: ', date, ' from ', color);
     addRipple(new Ripple(_color, date.getTime(), rippleScalingSpeed));
   };
@@ -43,6 +48,12 @@ module.exports = function BaseHeart(color, rippleScalingSpeed) {
   var update = function(currHeartNumber) {
     cleanUp();
     
+    var currDate = new Date().getTime();
+    console.log("currDate: ", currDate);
+    if (currDate > _timeSinceLastEmit + 1000 * 30) {
+      emit();
+    }
+
     _scale = updateScale(_scale);
     for (var i in _ripples) {
       _ripples[i].update();
